@@ -1,0 +1,17 @@
+/node_modules
+/public/hot
+/public/images/categorys/*
+/public/images/products/*
+/public/images/users/*
+/storage/app/images/categorys/*
+/storage/app/images/products/*
+/storage/app/images/users/*
+/vendor
+.env.backup
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+package-lock.json
+data
