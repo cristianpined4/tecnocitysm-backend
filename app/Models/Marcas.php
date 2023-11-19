@@ -23,6 +23,6 @@ class Marcas extends Model
 
     public function images()
     {
-        return $this->morphMany('App\Models\Images', 'imageable');
+        return $this->morphMany('App\Models\Images', 'imageable')->where('type', 'App\Models\Marcas');
     }
 }

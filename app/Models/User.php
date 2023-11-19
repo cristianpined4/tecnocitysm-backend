@@ -45,4 +45,14 @@ class User extends Authenticatable
     {
         return $this->belongsTo("App\Models\Roles");
     }
+
+    public function ventas()
+    {
+        return $this->hasMany('App\Models\Ventas', 'id_cliente');
+    }
+
+    public function images()
+    {
+        return $this->morphMany('App\Models\Images', 'imageable')->where('type', 'App\Models\User');
+    }
 }
