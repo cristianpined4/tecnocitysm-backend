@@ -2,7 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +13,14 @@ use App\Models\User;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+Route::get('/', function (Request $request) {
+    return response()->json([
+        'message' => "Bienvenido a la API de la tienda " . env('APP_NAME'),
+        'success' => true,
+    ], 200);
+});
+
 
 Route::group([
     'prefix' => 'auth'

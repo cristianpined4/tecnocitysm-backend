@@ -15,8 +15,8 @@ class CreateCarritosTable extends Migration
     {
         Schema::create('carritos', function (Blueprint $table) {
             $table->id();
-            $table->integer('id_cliente');
-            $table->integer('id_producto');
+            $table->unsignedBigInteger('id_cliente');
+            $table->unsignedBigInteger('id_producto');
             $table->integer('cantidad');
             $table->foreign('id_cliente')->references('id')->on('users');
             $table->foreign('id_producto')->references('id')->on('productos');

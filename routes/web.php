@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
 use App\Models\Roles;
 use App\Models\User;
 
@@ -16,7 +17,7 @@ use App\Models\User;
 |
 */
 
-Route::get('/', function () {
+Route::get('/', function (Request $request) {
     return view('welcome');
 });
 
@@ -51,3 +52,10 @@ Route::get("init", function () {
 });
 
 Auth::routes();
+
+Route::get('/home', function () {
+    return response()->json([
+        'message' => "Bienvenido a la API de la tienda " . env('APP_NAME'),
+        'success' => true,
+    ], 200);
+})->name('home');

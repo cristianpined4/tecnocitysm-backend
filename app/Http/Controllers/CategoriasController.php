@@ -52,8 +52,8 @@ class CategoriasController extends Controller
     public function store(Request $request)
     {
         $slugCategoria = Str::slug($request->nombre, '-');
-        if (Categorias::where('slug', $slugCategoria)->first()) {
-            $numExistente = Categorias::where('slug', $slugCategoria)->count();
+        if (Categorias::where('slug', 'like', "%$slugCategoria%")->first()) {
+            $numExistente = Categorias::where('slug', 'like', "%$slugCategoria%")->count();
             $slugCategoria = $slugCategoria . '-' . ($numExistente + 1);
         }
         $request->merge([
