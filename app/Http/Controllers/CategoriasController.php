@@ -52,6 +52,7 @@ class CategoriasController extends Controller
     public function store(Request $request)
     {
         $slugCategoria = Str::slug($request->nombre, '-');
+        $slugCategoria = strtolower($slugCategoria);
         if (Categorias::where('slug', 'like', "%$slugCategoria%")->first()) {
             $numExistente = Categorias::where('slug', 'like', "%$slugCategoria%")->count();
             $slugCategoria = $slugCategoria . '-' . ($numExistente + 1);
@@ -66,7 +67,7 @@ class CategoriasController extends Controller
             $extension = $image->getClientOriginalExtension();
             $imageName = Str::uuid() . '.' . $extension;
 
-            if (!Storage::disk('images-marcas')->put($imageName, File::get($image))) {
+            if (!Storage::disk('images-categorias')->put($imageName, File::get($image))) {
                 return response()->json([
                     'message' => "Error al guardar la imagen",
                     'success' => false,
@@ -97,6 +98,7 @@ class CategoriasController extends Controller
     public function show($slug)
     {
         $categoria = Categorias::where('slug', $slug)->with('images', 'marcas')->first();
+
         if (!$categoria) {
             return response()->json([
                 'message' => "Categoria no encontrada",

@@ -46,3 +46,10 @@ Route::get('not-authorized', function () {
 
 Route::get('categorias/get-categorias', 'CategoriasController@getCategorias');
 Route::resource('categorias', 'CategoriasController');
+Route::get('marcas/get-marcas', 'MarcasController@getMarcas');
+Route::resource('marcas', 'MarcasController');
+Route::get('modelos/get-modelos', 'ModelosController@getModelos');
+Route::resource('modelos', 'ModelosController');
+Route::get('productos/get-productos', 'ProductosController@getProductos');
+Route::delete('productos/borrar-imagen/{id}', 'ProductosController@deleteOneImages');
+Route::resource('productos', 'ProductosController');
