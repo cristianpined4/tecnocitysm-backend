@@ -97,6 +97,12 @@ class CategoriasController extends Controller
     public function show($slug)
     {
         $categoria = Categorias::where('slug', $slug)->with('images', 'marcas')->first();
+        if (!$categoria) {
+            return response()->json([
+                'message' => "Categoria no encontrada",
+                'success' => false,
+            ], 404);
+        }
         return response()->json([
             'message' => "Categoria obtenida exitosamente",
             'success' => true,

@@ -44,4 +44,5 @@ Route::get('not-authorized', function () {
     ], 401);
 })->name('not-authorized');
 
+Route::get('categorias/get-categorias', 'CategoriasController@getCategorias');
 Route::resource('categorias', 'CategoriasController');
