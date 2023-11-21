@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Producto;
+use App\Models\Productos;
 use App\Models\Images;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Auth;
 
 class ProductosController extends Controller
 {
@@ -22,7 +23,10 @@ class ProductosController extends Controller
      */
     public function index()
     {
-        $productos = Producto::with(['marca', 'modelo', 'categoria', 'images'])->get();
+        if (Auth::user()->rol_id != 1) {
+            return redirect()->route('not-authorized');
+        }
+        $productos = Productos::with(['marca', 'modelo', 'categoria', 'images'])->get();
         return response()->json([
             'productos' => $productos,
             'message' => 'Lista de productos obtenida correctamente',
@@ -32,7 +36,7 @@ class ProductosController extends Controller
 
     public function getProductos()
     {
-        $productos = Producto::with(['marca', 'modelo', 'categoria', 'images'])->where('status', 'activo')->get();
+        $productos = Productos::with(['marca', 'modelo', 'categoria', 'images'])->where('status', 'activo')->get();
         return response()->json([
             'productos' => $productos,
             'message' => 'Lista de productos obtenida correctamente',
@@ -48,10 +52,13 @@ class ProductosController extends Controller
      */
     public function store(Request $request)
     {
+        if (Auth::user()->rol_id != 1) {
+            return redirect()->route('not-authorized');
+        }
         $slugProducto = str_replace(' ', '-', $request->nombre);
         $slugProducto = strtolower($slugProducto);
-        if (Producto::where('slug', $slugProducto)->first()) {
-            $numExistente = Producto::where('slug', 'like', "%$slugProducto%")->count();
+        if (Productos::where('slug', $slugProducto)->first()) {
+            $numExistente = Productos::where('slug', 'like', "%$slugProducto%")->count();
             $slugProducto = $slugProducto . '-' . ($numExistente + 1);
         }
 
@@ -59,7 +66,7 @@ class ProductosController extends Controller
             'slug' => $slugProducto,
         ]);
 
-        $producto = Producto::create($request->all());
+        $producto = Productos::create($request->all());
 
         if ($request->hasFile('images')) {
             $images = $request->file('images');
@@ -98,8 +105,7 @@ class ProductosController extends Controller
      */
     public function show($slug)
     {
-
-        if (!$producto = Producto::with(['marca', 'modelo', 'categoria', 'images'])->where('slug', $slug)->first()) {
+        if (!$producto = Productos::with(['marca', 'modelo', 'categoria', 'images'])->where('slug', $slug)->first()) {
             return response()->json([
                 'message' => 'Producto no encontrado',
                 'success' => false,
@@ -122,7 +128,10 @@ class ProductosController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $productoActual = Producto::find($id);
+        if (Auth::user()->rol_id != 1) {
+            return redirect()->route('not-authorized');
+        }
+        $productoActual = Productos::find($id);
         if (!$productoActual) {
             return response()->json([
                 'message' => 'Producto no encontrado',
@@ -132,8 +141,8 @@ class ProductosController extends Controller
 
         $slugProducto = str_replace(' ', '-', $request->nombre);
         $slugProducto = strtolower($slugProducto);
-        if (Producto::where('slug', $slugProducto)->first()) {
-            $numExistente = Producto::where('slug', 'like', "%$slugProducto%")->count();
+        if (Productos::where('slug', $slugProducto)->first()) {
+            $numExistente = Productos::where('slug', 'like', "%$slugProducto%")->count();
             $slugProducto = $slugProducto . '-' . ($numExistente + 1);
         }
 
@@ -174,6 +183,9 @@ class ProductosController extends Controller
 
     public function deleteOneImages($id)
     {
+        if (Auth::user()->rol_id != 1) {
+            return redirect()->route('not-authorized');
+        }
         $image = Images::find($id);
         $currentID = $image->imageable;
         if (!$image) {
@@ -209,7 +221,10 @@ class ProductosController extends Controller
      */
     public function destroy($id)
     {
-        $productoActual = Producto::find($id);
+        if (Auth::user()->rol_id != 1) {
+            return redirect()->route('not-authorized');
+        }
+        $productoActual = Productos::find($id);
         if (!$productoActual) {
             return response()->json([
                 'message' => 'Producto no encontrado',

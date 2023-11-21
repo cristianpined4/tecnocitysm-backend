@@ -24,6 +24,9 @@ class CategoriasController extends Controller
      */
     public function index()
     {
+        if (Auth::user()->rol_id != 1) {
+            return redirect()->route('not-authorized');
+        }
         $categorias = Categorias::with('images', 'marcas')->get();
         return response()->json([
             'message' => "Categorias obtenidas exitosamente",
@@ -51,6 +54,9 @@ class CategoriasController extends Controller
      */
     public function store(Request $request)
     {
+        if (Auth::user()->rol_id != 1) {
+            return redirect()->route('not-authorized');
+        }
         $slugCategoria = Str::slug($request->nombre, '-');
         $slugCategoria = strtolower($slugCategoria);
         if (Categorias::where('slug', 'like', "%$slugCategoria%")->first()) {
@@ -122,6 +128,9 @@ class CategoriasController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (Auth::user()->rol_id != 1) {
+            return redirect()->route('not-authorized');
+        }
         $categoria = Categorias::find($id);
         $categoria->update($request->all());
 
@@ -166,6 +175,9 @@ class CategoriasController extends Controller
      */
     public function destroy($id)
     {
+        if (Auth::user()->rol_id != 1) {
+            return redirect()->route('not-authorized');
+        }
         $categoria  = Categorias::find($id);
         $image = Images::where('imageable', $categoria->id)->where('type', 'App\Models\Categorias')->first();
         if ($image) {

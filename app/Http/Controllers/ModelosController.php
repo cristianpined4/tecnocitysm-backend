@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Modelos;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+
 
 class ModelosController extends Controller
 {
@@ -29,6 +33,9 @@ class ModelosController extends Controller
      */
     public function index()
     {
+        if (Auth::user()->rol_id != 1) {
+            return redirect()->route('not-authorized');
+        }
         $modelos = Modelos::get();
         return response()->json([
             'message' => "Modelos obtenidos exitosamente",
@@ -46,6 +53,9 @@ class ModelosController extends Controller
      */
     public function store(Request $request)
     {
+        if (Auth::user()->rol_id != 1) {
+            return redirect()->route('not-authorized');
+        }
         $slugModelo = Str::slug($request->nombre, '-');
         $slugModelo = strtolower($slugModelo);
         if (Modelos::where('slug', 'like', "%$slugModelo%")->first()) {
@@ -96,6 +106,9 @@ class ModelosController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (Auth::user()->rol_id != 1) {
+            return redirect()->route('not-authorized');
+        }
         $modelo = Modelos::where('id', $id)->first();
         if ($modelo) {
             $modelo->update($request->all());
@@ -120,6 +133,9 @@ class ModelosController extends Controller
      */
     public function destroy($id)
     {
+        if (Auth::user()->rol_id != 1) {
+            return redirect()->route('not-authorized');
+        }
         $modelo = Modelos::where('id', $id)->first();
         if ($modelo) {
             $modelo->delete();

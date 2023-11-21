@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Categorias;
 use Illuminate\Http\Request;
 use App\Models\Marcas;
 use App\Models\Images;
@@ -25,6 +24,9 @@ class MarcasController extends Controller
      */
     public function index()
     {
+        if (Auth::user()->rol_id != 1) {
+            return redirect()->route('not-authorized');
+        }
         $marcas = Marcas::with('images')->get();
         return response()->json([
             'message' => "Marcas obtenidas exitosamente",
@@ -51,6 +53,9 @@ class MarcasController extends Controller
      */
     public function store(Request $request)
     {
+        if (Auth::user()->rol_id != 1) {
+            return redirect()->route('not-authorized');
+        }
         $slugMarca = Str::slug($request->nombre, '-');
         $slugMarca = strtolower($slugMarca);
         if (Marcas::where('slug', 'like', "%$slugMarca%")->first()) {
@@ -97,7 +102,6 @@ class MarcasController extends Controller
      */
     public function show($id)
     {
-
         $marca = Marcas::where('slug', $id)->with('images', 'productos', 'modelos')->first();
         return response()->json([
             'message' => "Marca obtenida exitosamente",
@@ -116,6 +120,9 @@ class MarcasController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (Auth::user()->rol_id != 1) {
+            return redirect()->route('not-authorized');
+        }
         $marca = Marcas::find($id);
         if (!$marca) {
             return response()->json([
@@ -165,6 +172,9 @@ class MarcasController extends Controller
      */
     public function destroy($id)
     {
+        if (Auth::user()->rol_id != 1) {
+            return redirect()->route('not-authorized');
+        }
         $marca = Marcas::find($id);
         if (!$marca) {
             return response()->json([
