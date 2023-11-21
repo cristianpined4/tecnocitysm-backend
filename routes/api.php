@@ -25,16 +25,8 @@ Route::group([
         'middleware' => 'auth:api'
     ], function () {
         Route::get('logout', 'AuthController@logout');
-        Route::get('user', 'AuthController@user');
+        Route::get('current-user', 'AuthController@user');
     });
-});
-
-// Aqui van las rutas que ocupan token
-Route::group([
-    'middleware' => 'auth:api'
-], function () {
-    Route::get('current-user', 'AuthController@user');
-    Route::resource('categoria', 'CategoriasController');
 });
 
 // aqui van las rutas que no ocupan token
@@ -45,4 +37,4 @@ Route::get('not-authorized', function () {
     ], 401);
 })->name('not-authorized');
 
-Route::get('get-categorias', 'CategoriasController@getCategorias');
+Route::resource('categorias', 'CategoriasController');

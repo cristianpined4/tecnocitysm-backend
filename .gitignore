@@ -1,10 +1,12 @@
 /node_modules
 /public/hot
 /public/images/categorys/*
+/public/images/makes/*
 /public/images/products/*
 /public/images/users/*
 /storage/app/images/categorys/*
 /storage/app/images/products/*
+/storage/app/images/makes/*
 /storage/app/images/users/*
 /vendor
 .env.backup
