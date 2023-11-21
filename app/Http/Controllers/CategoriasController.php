@@ -66,7 +66,7 @@ class CategoriasController extends Controller
             $extension = $image->getClientOriginalExtension();
             $imageName = Str::uuid() . '.' . $extension;
 
-            if (!Storage::disk('images-categorias')->put($imageName, File::get($image))) {
+            if (!Storage::disk('images-marcas')->put($imageName, File::get($image))) {
                 return response()->json([
                     'message' => "Error al guardar la imagen",
                     'success' => false,
@@ -142,6 +142,12 @@ class CategoriasController extends Controller
                 'type' => 'App\Models\Categorias',
             ]);
         }
+
+        return response()->json([
+            'message' => "Categoria actualizada exitosamente",
+            'success' => true,
+            'categoria' => $categoria,
+        ], 200);
     }
 
     /**
