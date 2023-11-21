@@ -26,7 +26,6 @@ Route::group([
     ], function () {
         Route::get('logout', 'AuthController@logout');
         Route::get('user', 'AuthController@user');
-        Route::resource('categoria', 'CategoriasController');
     });
 });
 
@@ -35,6 +34,7 @@ Route::group([
     'middleware' => 'auth:api'
 ], function () {
     Route::get('current-user', 'AuthController@user');
+    Route::resource('categoria', 'CategoriasController');
 });
 
 // aqui van las rutas que no ocupan token
