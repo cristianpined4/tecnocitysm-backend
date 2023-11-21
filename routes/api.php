@@ -14,6 +14,35 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::get('/', function (Request $request) {
+    return response()->json([
+        'message' => "Bienvenido a la API de la tienda " . env('APP_NAME'),
+        'success' => true,
+    ], 200);
 });
+
+
+Route::group([
+    'prefix' => 'auth'
+], function () {
+    Route::post('login', 'AuthController@login');
+    Route::post('signup', 'AuthController@signUp');
+
+    Route::group([
+        'middleware' => 'auth:api'
+    ], function () {
+        Route::get('logout', 'AuthController@logout');
+        Route::get('current-user', 'AuthController@user');
+    });
+});
+
+// aqui van las rutas que no ocupan token
+Route::get('not-authorized', function () {
+    return response()->json([
+        'message' => "No autorizado",
+        'success' => false,
+    ], 401);
+})->name('not-authorized');
+
+Route::get('categorias/get-categorias', 'CategoriasController@getCategorias');
+Route::resource('categorias', 'CategoriasController');

@@ -1,6 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
+use App\Models\Roles;
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,8 +17,45 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+Route::get('/', function (Request $request) {
     return view('welcome');
 });
 
+Route::get("init", function () {
+
+    $rol = roles::find(1);
+    if ($rol) {
+        return response()->json([
+            "message" => "Base de datos ya inicializada",
+            "success" => false
+        ]);
+    }
+
+    $rol = new Roles();
+    $rol->name = "Administador";
+    $rol->save();
+    $rol = new Roles();
+    $rol->name = "Usuario";
+    $rol->save();
+    $user = new User();
+    $user->name = "admin";
+    $user->username = "admin";
+    $user->email = "admin@admin.com";
+    $user->password = Hash::make("admin");
+    $user->rol_id = 1;
+    $user->save();
+
+    return response()->json([
+        "message" => "Base de datos inicializada correctamente",
+        "success" => true
+    ]);
+});
+
 Auth::routes();
+
+Route::get('/home', function () {
+    return response()->json([
+        'message' => "Bienvenido a la API de la tienda " . env('APP_NAME'),
+        'success' => true,
+    ], 200);
+})->name('home');
