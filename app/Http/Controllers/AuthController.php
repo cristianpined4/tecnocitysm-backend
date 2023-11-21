@@ -21,10 +21,17 @@ class AuthController extends Controller
             'password' => 'required|string'
         ]);
 
+        $username = explode('@', $request->email)[0];
+        if (User::where('username', $username)->first()) {
+            $numExistente = User::where('username', $username)->count();
+            $username = $username . ($numExistente + 1);
+        }
+
         User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'username' => $username,
             'rol_id' => 2,
         ]);
 
