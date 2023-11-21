@@ -69,7 +69,6 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'rol_id' => 2,
-            'token_web' => $data['json_token'],
         ]);
     }
 }

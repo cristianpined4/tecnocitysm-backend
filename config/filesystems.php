@@ -52,16 +52,22 @@ return [
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
         ],
-        'images-products' => [
+        'images-productos' => [
             'driver' => 'local', //tipo driver local-nube(s3 de amazon)
             'root' => storage_path('app/images/products'), //ruta en la carpeta storage/app y
             'url' => env('APP_URL') . '/images/products', //ruta base storage no cambiar
             'visibility' => 'public', //si se podra acceder desde el exterior
         ],
-        'images-categorys' => [
+        'images-categorias' => [
             'driver' => 'local', //tipo driver local-nube(s3 de amazon)
             'root' => storage_path('app/images/categorys'), //ruta en la carpeta storage/app y
             'url' => env('APP_URL') . '/images/categorys', //ruta base storage no cambiar
+            'visibility' => 'public', //si se podra acceder desde el exterior
+        ],
+        'images-marcas' => [
+            'driver' => 'local', //tipo driver local-nube(s3 de amazon)
+            'root' => storage_path('app/images/makes'), //ruta en la carpeta storage/app y
+            'url' => env('APP_URL') . '/images/makes', //ruta base storage no cambiar
             'visibility' => 'public', //si se podra acceder desde el exterior
         ],
         'images-users' => [
@@ -88,6 +94,7 @@ return [
         public_path('images/products') => storage_path('app/images/products'),
         public_path('images/categorys') => storage_path('app/images/categorys'),
         public_path('images/users') => storage_path('app/images/users'),
+        public_path('images/makes') => storage_path('app/images/makes'),
     ],
 
 ];

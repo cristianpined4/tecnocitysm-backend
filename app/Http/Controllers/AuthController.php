@@ -31,6 +31,7 @@ class AuthController extends Controller
         return response()->json([
             'message' => "Usuario creado exitosamente",
             'success' => true,
+            'current_user' => Auth::user(),
         ], 201);
     }
 
@@ -64,7 +65,9 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $tokenResult->accessToken,
             'token_type' => 'Bearer',
-            'expires_at' => Carbon::parse($token->expires_at)->toDateTimeString()
+            'expires_at' => Carbon::parse($token->expires_at)->toDateTimeString(),
+            'success' => true,
+            'current_user' => Auth::user(),
         ]);
     }
 
