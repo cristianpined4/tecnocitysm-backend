@@ -116,6 +116,6 @@ class AuthController extends Controller
      */
     public function user(Request $request)
     {
-        return response()->json($request->user()->with('rol')->first());
+        return response()->json($request->user()->with('rol')->where('id', $request->user()->id)->first());
     }
 }
