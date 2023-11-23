@@ -16,9 +16,11 @@ class CreateModelosTable extends Migration
         Schema::create('modelos', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('id_marca');
+            $table->unsignedBigInteger('id_categoria');
             $table->string('nombre');
             $table->string('descripcion');
             $table->foreign('id_marca')->references('id')->on('marcas')->onDelete('cascade');
+            $table->foreign('id_categoria')->references('id')->on('categorias')->onDelete('cascade');
             $table->string('status')->default('activo');
             $table->string('slug')->unique();
             $table->timestamps();

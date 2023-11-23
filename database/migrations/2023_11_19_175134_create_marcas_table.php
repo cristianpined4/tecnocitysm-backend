@@ -15,10 +15,8 @@ class CreateMarcasTable extends Migration
     {
         Schema::create('marcas', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_categoria');
             $table->string('nombre');
             $table->string('descripcion');
-            $table->foreign('id_categoria')->references('id')->on('categorias')->onDelete('cascade');
             $table->string('status')->default('activo');
             $table->string('slug')->unique();
             $table->timestamps();
