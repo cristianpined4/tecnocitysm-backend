@@ -90,7 +90,6 @@ return [
     */
 
     'links' => [
-        public_path('storage') => storage_path('app/public'),
         public_path('images/products') => storage_path('app/images/products'),
         public_path('images/categorys') => storage_path('app/images/categorys'),
         public_path('images/users') => storage_path('app/images/users'),

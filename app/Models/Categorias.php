@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Marcas;
-use App\Models\Modelos;
+
 
 class Categorias extends Model
 {
@@ -13,15 +13,12 @@ class Categorias extends Model
 
     protected $table = "categorias";
 
-    public function marca()
-    {
-        $modelos = $this->hasMany('App\Models\Modelos', 'id_categoria');
-        $marcas = [];
-        foreach ($modelos as $modelo) {
-            $marcas[] = $modelo->id_marca;
-        }
-        return Marcas::whereIn('id', $marcas)->get();
-    }
+    protected $fillable = [
+        'nombre',
+        'descripcion',
+        'status',
+        'slug',
+    ];
 
     public function productos()
     {
@@ -35,6 +32,6 @@ class Categorias extends Model
 
     public function images()
     {
-        return $this->morphMany('App\Models\Images', 'imageable')->where('type', 'App\Models\Categorias');
+        return $this->hasMany('App\Models\Images', 'imageable', 'id')->where('type', 'App\Models\Categorias');
     }
 }

@@ -7,7 +7,7 @@ use App\Models\Categorias;
 use App\Models\Images;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Auth;
 
 class CategoriasController extends Controller
 {
@@ -27,7 +27,7 @@ class CategoriasController extends Controller
         if (Auth::user()->rol_id != 1) {
             return redirect()->route('not-authorized');
         }
-        $categorias = Categorias::with('images', 'marcas')->get();
+        $categorias = Categorias::with('images', 'modelos')->get();
         return response()->json([
             'message' => "Categorias obtenidas exitosamente",
             'success' => true,
@@ -38,7 +38,7 @@ class CategoriasController extends Controller
 
     public function getCategorias()
     {
-        $categorias = Categorias::with('images', 'marcas')->where('status', 'activo')->get();
+        $categorias = Categorias::with('images', 'modelos')->where('status', 'activo')->get();
         return response()->json([
             'message' => "Categorias obtenidas exitosamente",
             'success' => true,
@@ -57,6 +57,7 @@ class CategoriasController extends Controller
         if (Auth::user()->rol_id != 1) {
             return redirect()->route('not-authorized');
         }
+
         $slugCategoria = Str::slug($request->nombre, '-');
         $slugCategoria = strtolower($slugCategoria);
         if (Categorias::where('slug', 'like', "%$slugCategoria%")->first()) {
@@ -68,12 +69,15 @@ class CategoriasController extends Controller
         ]);
         $categoria = Categorias::create($request->all());
 
-        if ($request->hasFile('imagen')) {
-            $image = $request->file('imagen');
-            $extension = $image->getClientOriginalExtension();
+        if ($request->imagen && $request->imagen != "") {
+            $url = $request->imagen;
+            $extension = explode('/', explode(':', substr($url, 0, strpos($url, ';')))[1])[1];
+            $replace = substr($url, 0, strpos($url, ',') + 1);
+            $image = str_replace($replace, '', $url);
+            $image = str_replace(' ', '+', $image);
             $imageName = Str::uuid() . '.' . $extension;
 
-            if (!Storage::disk('images-categorias')->put($imageName, File::get($image))) {
+            if (!Storage::disk('images-categorias')->put($imageName, base64_decode($image))) {
                 return response()->json([
                     'message' => "Error al guardar la imagen",
                     'success' => false,
@@ -103,7 +107,7 @@ class CategoriasController extends Controller
      */
     public function show($slug)
     {
-        $categoria = Categorias::where('slug', $slug)->with('images', 'marcas')->first();
+        $categoria = Categorias::where('slug', $slug)->with('images', 'modelos')->first();
 
         if (!$categoria) {
             return response()->json([
@@ -134,18 +138,25 @@ class CategoriasController extends Controller
         $categoria = Categorias::find($id);
         $categoria->update($request->all());
 
-        if ($request->hasFile('imagen')) {
-            $image = $request->file('imagen');
-            $extension = $image->getClientOriginalExtension();
+        if ($request->imagen && $request->imagen != "") {
+            $url = $request->imagen;
+            $extension = explode('/', explode(':', substr($url, 0, strpos($url, ';')))[1])[1];
+            $replace = substr($url, 0, strpos($url, ',') + 1);
+            $image = str_replace($replace, '', $url);
+            $image = str_replace(' ', '+', $image);
             $imageName = Str::uuid() . '.' . $extension;
 
             $currentImage = Images::where('imageable', $categoria->id)->where('type', 'App\Models\Categorias')->first();
             if ($currentImage) {
-                Storage::disk('images-categorias')->delete($currentImage->path);
-                $currentImage->delete();
+                if (is_file($currentImage->path)) {
+                    unlink($currentImage->path);
+                    $currentImage->delete();
+                } {
+                    $currentImage->delete();
+                }
             }
 
-            if (!Storage::disk('images-categorias')->put($imageName, File::get($image))) {
+            if (!Storage::disk('images-categorias')->put($imageName, base64_decode($image))) {
                 return response()->json([
                     'message' => "Error al guardar la imagen",
                     'success' => false,
@@ -181,8 +192,14 @@ class CategoriasController extends Controller
         $categoria  = Categorias::find($id);
         $image = Images::where('imageable', $categoria->id)->where('type', 'App\Models\Categorias')->first();
         if ($image) {
-            Storage::disk('images-categorias')->delete($image->path);
-            $image->delete();
+            if ($image) {
+                if (is_file($image->path)) {
+                    unlink($image->path);
+                    $image->delete();
+                } {
+                    $image->delete();
+                }
+            }
         }
         $categoria->delete();
         return response()->json([

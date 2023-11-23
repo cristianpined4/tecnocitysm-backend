@@ -55,6 +55,6 @@ class User extends Authenticatable
 
     public function images()
     {
-        return $this->morphMany('App\Models\Images', 'imageable')->where('type', 'App\Models\User');
+        return $this->hasMany('App\Models\Images', 'imageable', 'id')->where('type', 'App\Models\User');
     }
 }

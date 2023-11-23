@@ -28,7 +28,7 @@ class Productos extends Model
 
     public function images()
     {
-        return $this->morphMany('App\Models\Images', 'imageable')->where('type', 'App\Models\Productos');
+        return $this->hasMany('App\Models\Images', 'imageable', 'id')->where('type', 'App\Models\Productos');
     }
 
     public function ventas()

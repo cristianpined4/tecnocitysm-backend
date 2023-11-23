@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Marcas;
 use App\Models\Images;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class MarcasController extends Controller
 {
@@ -67,12 +67,15 @@ class MarcasController extends Controller
         ]);
         $nuevo = Marcas::create($request->all());
 
-        if ($request->hasFile('imagen')) {
-            $image = $request->file('imagen');
-            $extension = $image->getClientOriginalExtension();
+        if ($request->imagen && $request->imagen != "") {
+            $url = $request->imagen;
+            $extension = explode('/', explode(':', substr($url, 0, strpos($url, ';')))[1])[1];
+            $replace = substr($url, 0, strpos($url, ',') + 1);
+            $image = str_replace($replace, '', $url);
+            $image = str_replace(' ', '+', $image);
             $imageName = Str::uuid() . '.' . $extension;
 
-            if (!Storage::disk('images-marcas')->put($imageName, File::get($image))) {
+            if (!Storage::disk('images-marcas')->put($imageName, base64_decode($image))) {
                 return response()->json([
                     'message' => "Error al guardar la imagen",
                     'success' => false,
@@ -132,18 +135,25 @@ class MarcasController extends Controller
         }
         $marca->update($request->all());
 
-        if ($request->hasFile('imagen')) {
-            $image = $request->file('imagen');
-            $extension = $image->getClientOriginalExtension();
+        if ($request->imagen && $request->imagen != "") {
+            $url = $request->imagen;
+            $extension = explode('/', explode(':', substr($url, 0, strpos($url, ';')))[1])[1];
+            $replace = substr($url, 0, strpos($url, ',') + 1);
+            $image = str_replace($replace, '', $url);
+            $image = str_replace(' ', '+', $image);
             $imageName = Str::uuid() . '.' . $extension;
 
             $imagenActual = Images::where('imageable', $marca->id)->where('type', 'App\Models\Marcas')->first();
             if ($imagenActual) {
-                Storage::disk('images-marcas')->delete($imagenActual->path);
-                $imagenActual->delete();
+                if (is_file($imagenActual->path)) {
+                    unlink($$imagenActual->path);
+                    $imagenActual->delete();
+                } {
+                    $imagenActual->delete();
+                }
             }
 
-            if (!Storage::disk('images-marcas')->put($imageName, File::get($image))) {
+            if (!Storage::disk('images-marcas')->put($imageName, base64_decode($image))) {
                 return response()->json([
                     'message' => "Error al guardar la imagen",
                     'success' => false,
@@ -186,8 +196,12 @@ class MarcasController extends Controller
         $imagenActual = Images::where('imageable', $marca->id)->where('type', 'App\Models\Marcas')->first();
 
         if ($imagenActual) {
-            Storage::disk('images-marcas')->delete($imagenActual->path);
-            $imagenActual->delete();
+            if (is_file($imagenActual->path)) {
+                unlink($$imagenActual->path);
+                $imagenActual->delete();
+            } {
+                $imagenActual->delete();
+            }
         }
 
         $marca->delete();

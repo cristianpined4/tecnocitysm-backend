@@ -7,7 +7,6 @@ use App\Models\Productos;
 use App\Models\Images;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 
 class ProductosController extends Controller
@@ -68,13 +67,17 @@ class ProductosController extends Controller
 
         $producto = Productos::create($request->all());
 
-        if ($request->hasFile('images')) {
-            $images = $request->file('images');
-            foreach ($images as $image) {
-                $extension = $image->getClientOriginalExtension();
+        if ($request->imagen && $request->imagen != "") {
+            $images = explode(',', $request->imagen);
+            foreach ($images as $imageItem) {
+                $url = $imageItem;
+                $extension = explode('/', explode(':', substr($url, 0, strpos($url, ';')))[1])[1];
+                $replace = substr($url, 0, strpos($url, ',') + 1);
+                $image = str_replace($replace, '', $url);
+                $image = str_replace(' ', '+', $image);
                 $imageName = Str::uuid() . '.' . $extension;
 
-                if (!Storage::disk('images-productos')->put($imageName, File::get($image))) {
+                if (!Storage::disk('images-productos')->put($imageName, base64_decode($image))) {
                     return response()->json([
                         'message' => "Error al guardar la imagen",
                         'success' => false,
@@ -152,13 +155,17 @@ class ProductosController extends Controller
 
         $productoActual->update($request->all());
 
-        if ($request->hasFile('images')) {
-            $images = $request->file('images');
-            foreach ($images as $image) {
-                $extension = $image->getClientOriginalExtension();
+        if ($request->imagen && $request->imagen != "") {
+            $images = explode(',', $request->imagen);
+            foreach ($images as $imageItem) {
+                $url = $imageItem;
+                $extension = explode('/', explode(':', substr($url, 0, strpos($url, ';')))[1])[1];
+                $replace = substr($url, 0, strpos($url, ',') + 1);
+                $image = str_replace($replace, '', $url);
+                $image = str_replace(' ', '+', $image);
                 $imageName = Str::uuid() . '.' . $extension;
 
-                if (!Storage::disk('images-productos')->put($imageName, File::get($image))) {
+                if (!Storage::disk('images-productos')->put($imageName, base64_decode($image))) {
                     return response()->json([
                         'message' => "Error al guardar la imagen",
                         'success' => false,
@@ -195,16 +202,12 @@ class ProductosController extends Controller
             ], 404);
         }
 
-        if (!Storage::disk('images-productos')->delete($image->path)) {
-            return response()->json([
-                'message' => "Error al eliminar la imagen",
-                'success' => false,
-            ], 500);
+        if (is_file($image->path)) {
+            unlink($image->path);
+            $image->delete();
+        } {
+            $image->delete();
         }
-
-        $image->delete();
-
-
 
         return response()->json([
             'message' => 'Imagen eliminada correctamente',
@@ -234,8 +237,12 @@ class ProductosController extends Controller
 
         $images = Images::where('imageable', $productoActual->id)->where('type', 'App\Models\Productos')->get();
         foreach ($images as $image) {
-            Storage::disk('images-productos')->delete($image->path);
-            $image->delete();
+            if (is_file($image->path)) {
+                unlink($$image->path);
+                $image->delete();
+            } {
+                $image->delete();
+            }
         }
 
         $productoActual->delete();
