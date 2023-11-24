@@ -11,6 +11,14 @@ class Modelos extends Model
 
     protected $table = "modelos";
 
+    protected $fillable = [
+        'nombre',
+        'descripcion',
+        'status',
+        'id_marca',
+        'id_categoria',
+    ];
+
     public function productos()
     {
         return $this->hasMany('App\Models\Productos', 'id_modelo');

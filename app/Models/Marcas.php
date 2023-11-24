@@ -11,6 +11,13 @@ class Marcas extends Model
 
     protected $table = "marcas";
 
+    protected $fillable = [
+        'nombre',
+        'descripcion',
+        'status',
+        'slug',
+    ];
+
     public function productos()
     {
         return $this->hasMany('App\Models\Productos', 'id_marca');

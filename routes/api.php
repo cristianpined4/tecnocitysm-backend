@@ -53,3 +53,4 @@ Route::resource('modelos', 'ModelosController');
 Route::get('productos/get-productos', 'ProductosController@getProductos');
 Route::delete('productos/borrar-imagen/{id}', 'ProductosController@deleteOneImages');
 Route::resource('productos', 'ProductosController');
+Route::resource('usuarios', 'UserController');
