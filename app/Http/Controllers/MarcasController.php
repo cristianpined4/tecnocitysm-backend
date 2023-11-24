@@ -146,7 +146,7 @@ class MarcasController extends Controller
             $imagenActual = Images::where('imageable', $marca->id)->where('type', 'App\Models\Marcas')->first();
             if ($imagenActual) {
                 if (is_file($imagenActual->path)) {
-                    unlink($$imagenActual->path);
+                    unlink($imagenActual->path);
                     $imagenActual->delete();
                 } {
                     $imagenActual->delete();
@@ -197,7 +197,7 @@ class MarcasController extends Controller
 
         if ($imagenActual) {
             if (is_file($imagenActual->path)) {
-                unlink($$imagenActual->path);
+                unlink($imagenActual->path);
                 $imagenActual->delete();
             } {
                 $imagenActual->delete();
