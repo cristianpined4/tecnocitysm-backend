@@ -18,7 +18,10 @@ class Productos extends Model
         'id_categoria',
         'id_marca',
         'id_modelo',
-        'precio',
+        'precio_compra',
+        'precio_venta',
+        'codigo_barras',
+        'codigo_producto',
         'stock',
         'slug',
     ];

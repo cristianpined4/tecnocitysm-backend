@@ -17,6 +17,7 @@ class Modelos extends Model
         'status',
         'id_marca',
         'id_categoria',
+        'slug'
     ];
 
     public function productos()

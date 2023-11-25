@@ -43,6 +43,21 @@ class ProductosController extends Controller
         ], 200);
     }
 
+    public function getNewCode()
+    {
+        if (Auth::user()->rol_id != 1) {
+            return redirect()->route('not-authorized');
+        }
+        $lastProducto = Productos::orderBy('id', 'desc')->first();
+        $newCode = $lastProducto ? $lastProducto->id + 1 : 1;
+        $newCode = "TECH" . str_pad($newCode, 6, "0", STR_PAD_LEFT);
+        return response()->json([
+            'newCode' => $newCode,
+            'message' => 'Código obtenido correctamente',
+            'success' => true,
+        ], 200);
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -68,7 +83,7 @@ class ProductosController extends Controller
         $producto = Productos::create($request->all());
 
         if ($request->imagen && $request->imagen != "") {
-            $images = explode(',', $request->imagen);
+            $images = explode('||', $request->imagen);
             foreach ($images as $imageItem) {
                 $url = $imageItem;
                 $extension = explode('/', explode(':', substr($url, 0, strpos($url, ';')))[1])[1];
@@ -87,7 +102,7 @@ class ProductosController extends Controller
                 Images::create([
                     'url' => Storage::disk('images-productos')->url($imageName),
                     'path' => Storage::disk('images-productos')->path($imageName),
-                    'imageable' => $categoria->id,
+                    'imageable' => $producto->id,
                     'type' => 'App\Models\Productos',
                 ]);
             }
@@ -156,7 +171,7 @@ class ProductosController extends Controller
         $productoActual->update($request->all());
 
         if ($request->imagen && $request->imagen != "") {
-            $images = explode(',', $request->imagen);
+            $images = explode('||', $request->imagen);
             foreach ($images as $imageItem) {
                 $url = $imageItem;
                 $extension = explode('/', explode(':', substr($url, 0, strpos($url, ';')))[1])[1];
@@ -238,7 +253,7 @@ class ProductosController extends Controller
         $images = Images::where('imageable', $productoActual->id)->where('type', 'App\Models\Productos')->get();
         foreach ($images as $image) {
             if (is_file($image->path)) {
-                unlink($$image->path);
+                unlink($image->path);
                 $image->delete();
             } {
                 $image->delete();

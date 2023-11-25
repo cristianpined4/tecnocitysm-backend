@@ -37,7 +37,7 @@ class MarcasController extends Controller
 
     public function getMarcas()
     {
-        $marcas = Marcas::with('images')->where('status', 'activo')->get();
+        $marcas = Marcas::with('images', 'modelos')->where('status', 'activo')->get();
         return response()->json([
             'message' => "Marcas obtenidas exitosamente",
             'success' => true,

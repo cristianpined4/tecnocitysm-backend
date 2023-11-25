@@ -36,7 +36,7 @@ class ModelosController extends Controller
         if (Auth::user()->rol_id != 1) {
             return redirect()->route('not-authorized');
         }
-        $modelos = Modelos::get();
+        $modelos = Modelos::with('marca', 'categoria')->get();
         return response()->json([
             'message' => "Modelos obtenidos exitosamente",
             'success' => true,
